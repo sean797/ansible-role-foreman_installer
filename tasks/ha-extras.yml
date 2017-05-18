@@ -1,0 +1,44 @@
+---
+- name: run notified handlers
+  meta: flush_handlers
+
+- name: Write /etc/foreman/encryption_key.rb 
+  template:
+    src: templates/encryption_key.rb.j2
+    dest: /etc/foreman/encryption_key.rb
+    owner: root
+    group: "{{ ((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).user |
+           default( (installer_scenarios_answers.foreman | default({})).user ) |
+           default('foreman') }}"
+    mode: 0640
+  when: foreman_encryption_key is defined
+  notify:
+    - restart httpd
+
+- name: reload ansible_local to get local CA certs
+  setup:
+    filter: ansible_local
+
+- name: Fetch katello-default-ca certs to localhost
+  fetch:
+    src: "{{ ((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca |
+           default('/etc/pki/katello/certs/katello-default-ca.crt') }}"
+    dest: /var/tmp/
+  when: katello_cluster_group is defined
+
+- name: Distribute katello-default-ca cert
+  copy:
+    src: "/var/tmp/{{ ansible_fqdn + (((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca | default('/etc/pki/katello/certs/katello-default-ca.crt')) }}"
+    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-katello-default-ca.crt"
+  delegate_to: "{{ item }}" 
+  with_items: "{{ groups[katello_cluster_group] }}"
+  when: katello_cluster_group is defined
+  notify:
+    - write answers file
+    - execute foreman-installer
+
+- name: Include other katello-default-ca Certificates in installer_scenarios_answers
+  set_fact:
+    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ katello_certs_dir + '/' + hostvars[item]['ansible_hostname'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
+  with_items: "{{ groups[katello_cluster_group] }}"
+  when: katello_cluster_group is defined

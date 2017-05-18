@@ -1,0 +1,11 @@
+# Format:
+# <classname>: false - don't include this class
+# <classname>: true - include and use the defaults
+# <classname>:
+#   <param>: <value> - include and override the default(s)
+#
+# See params.pp in each class for what options are available
+
+---
+{% set answers = ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | combine(installer_scenarios_answers, recursive=True) %}
+{{ answers | to_nice_yaml(indent=2) | indent(width=2, indentfirst=True) }}

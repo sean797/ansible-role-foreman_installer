@@ -1,0 +1,10 @@
+---
+- include: "packages.yml"
+
+- include: "facts.yml"
+
+- include: "installer.yml"
+
+- include: "ha-extras.yml"
+  tags:
+    - ha_extras

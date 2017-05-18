@@ -1,0 +1,16 @@
+---
+- name: "Install {{ foreman_installer_pkg }}"
+  yum:
+    name: "{{ foreman_installer_pkg }}"
+    state: "{{ foreman_installer_pkg_state }}"
+  notify:
+    - reload ansible_local
+    - 'set dont_save_answers to False'
+
+- name: Apply installer fixes
+  patch:
+    src: "{{ item.src }}"
+    basedir: "{{ item.basedir }}" 
+    strip: "{{ item.strip | default(1) }}"
+  with_items: "{{ foreman_installer_patches }}"
+  when: foreman_installer_patches is defined

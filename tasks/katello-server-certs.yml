@@ -1,0 +1,66 @@
+---
+- name: "Create {{ katello_certs_dir }}"
+  file:
+    path: "{{ katello_certs_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Register cert files stat
+  stat:
+    path: "{{ item }}"
+  with_items:
+    - "{{ katello_certs_dir }}/katello-ca-cert.pem"
+    - "{{ katello_certs_dir }}/katello-server-cert.cer"
+    - "{{ katello_certs_dir }}/katello-server-cert.key"
+    - "{{ katello_certs_dir }}/katello-server-cert.csr"
+  register: certs_stat
+
+- name: Write custom CA certificate file
+  copy:
+    content: "{{ katello_ca }}"
+    dest: "{{ katello_certs_dir }}/katello-ca-cert.pem"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - 'set update_certs to True'
+    - execute foreman-installer
+
+- name: Write custom certificate file
+  copy:
+    content: "{{ katello_cert }}"
+    dest: "{{ katello_certs_dir }}/katello-server-cert.cer"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - 'set update_certs to True'
+    - execute foreman-installer
+
+- name: Write custom key certificate file
+  copy:
+    content: "{{ katello_key }}"
+    dest: "{{ katello_certs_dir }}/katello-server-cert.key"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - 'set update_certs to True'
+    - execute foreman-installer
+
+- name: Write custom CSR certificate file
+  copy:
+    content: "{{ katello_csr }}"
+    dest: "{{ katello_certs_dir }}/katello-server-cert.csr"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - 'set update_certs to True'
+    - execute foreman-installer
+
+- name: Include katello certificate options in installer_scenarios_answers
+  set_fact:
+    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { 'certs': {'server_cert': katello_certs_dir + '/katello-server-cert.cer','server_cert_req': katello_certs_dir + '/katello-server-cert.csr','server_key': katello_certs_dir + '/katello-server-cert.key','server_ca_cert': katello_certs_dir + '/katello-ca-cert.pem' } }, recursive=True ) }}"

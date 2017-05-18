@@ -1,0 +1,43 @@
+---
+- name: Check Scenario isn't being changed
+  fail:
+    msg: Currently we cannot change to a different Scenario.
+  when:
+    - ansible_local.foreman_installer.last_scenario is defined
+    - ansible_local.foreman_installer.last_scenario != foreman_installer_scenario
+
+- name: run notified handlers
+  meta: flush_handlers
+
+- include: "katello-server-certs.yml"
+  when:
+    - katello_cert is defined
+    - foreman_installer_scenario == 'katello' or foreman_installer_scenario == 'foreman' or foreman_installer_scenario == 'satellite'
+
+- include: "katello-proxy-certs.yml"
+  when:
+    - foreman_installer_scenario == 'capsule' or foreman_installer_scenario == 'foreman-proxy-content'
+    - katello_proxy_cert is defined
+
+- name: Write /etc/foreman-installer/custom-hiera.yaml
+  template:
+    src: templates/custom-hiera.yaml.j2
+    dest: /etc/foreman-installer/custom-hiera.yaml
+    owner: root
+    group: root
+    mode: 0644
+  when: foreman_installer_custom_hiera is defined
+  notify:
+    - execute foreman-installer
+
+- name: "Write /etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml"
+  template:
+    src: templates/scenario-answers.yaml.j2
+    dest: "/etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - reload ansible_local
+    - rewrite answers file
+    - execute foreman-installer

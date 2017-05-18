@@ -1,0 +1,47 @@
+---
+- name: restart httpd
+  service:
+    name: httpd
+    state: restarted
+
+- name: 'set update_certs to True'
+  set_fact:
+    update_certs: True
+  when: certs_stat.results[0].stat.exists or certs_stat.results[1].stat.exists or certs_stat.results[2].stat.exists
+
+- name: 'set dont_save_answers to False'
+  set_fact:
+    dont_save_answers: False
+
+- name: write answers file
+  template:
+    src: templates/scenario-answers.yaml.j2
+    dest: "/etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - reload ansible_local
+
+- name: execute foreman-installer
+  command: >
+      foreman-installer {{ (foreman_installer_verbose == True) | ternary("-v", "") }}
+      --scenario "{{ foreman_installer_scenario }}"
+      {{ (dont_save_answers == True) | ternary("--dont-save-answers", "") }}
+      {{ (update_certs == True and update_certs_tar == False) | ternary("--certs-update-server --certs-update-server-ca", "") }}
+      {{ (update_certs == True and update_certs_tar == True) | ternary("--certs-update-server", "") }}
+      {{ foreman_installer_options | join(" ") }}
+
+- name: reload ansible_local
+  setup:
+    filter: ansible_local
+
+- name: rewrite answers file
+  template:
+    src: templates/scenario-answers.yaml.j2
+    dest: "/etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - reload ansible_local

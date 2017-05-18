@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'yaml'
+
+def last_scenario
+  if File.exists? ("/etc/foreman-installer/scenarios.d/last_scenario.yaml")
+    path = File.readlink('/etc/foreman-installer/scenarios.d/last_scenario.yaml')
+    File.basename(path,File.extname(path))
+  end
+end
+
+def get_answers(scenario=last_scenario)
+  if File.exists? ("/etc/foreman-installer/scenarios.d/#{scenario}-answers.yaml")
+    yaml = YAML.load_file("/etc/foreman-installer/scenarios.d/#{scenario}-answers.yaml")
+  end
+end
+
+output = {}
+output['last_scenario'] = last_scenario if last_scenario
+output["{{ foreman_installer_scenario }}_answers"] = get_answers("{{ foreman_installer_scenario }}") if get_answers("{{ foreman_installer_scenario }}")
+
+puts JSON.pretty_generate(output)

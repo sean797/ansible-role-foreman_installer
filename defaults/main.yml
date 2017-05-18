@@ -1,0 +1,37 @@
+---
+foreman_installer_pkg: foreman-installer
+foreman_installer_pkg_state: present
+foreman_installer_verbose: False
+foreman_installer_scenario: foreman
+foreman_installer_options: []
+foreman_installer_custom_hiera: {}
+
+## Hash of Custom answers
+# installer_scenarios_answers:
+#   foreman:
+#     admin_password: changeme
+
+## Custom Certs. Katello only
+katello_certs_dir: /root/certs
+#katello_ca: 
+#katello_cert:
+#katello_key:
+#katello_csr:
+update_certs: False
+update_certs_tar: False
+
+## Advanced Options
+# foreman_installer_patches:
+#   - { src: files/proxy.patch, basedir: /usr/share/katello-installer-base/modules/pulp/ }
+#
+## Generally you only need these if you are building a Foreman cluster.
+# foreman_encryption_key:
+# Group name contain all the Katello servers in a cluster
+# katello_cluster_group:
+
+## Internal Only
+generate_proxy_certs_from: "{{ (installer_scenarios_answers.capsule | default( installer_scenarios_answers.foreman_proxy_content )).parent_fqdn }}"
+cert_generate_command: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-certs-generate', 'foreman-proxy-certs-generate') }}"
+cert_generate_fqdn_opt: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-fqdn', 'foreman-proxy-fqdn') }}"
+certs_puppet_module: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule', 'foreman_proxy_content') }}"
+dont_save_answers: True
