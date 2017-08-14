@@ -1,6 +1,6 @@
 ---
 - name: "Install {{ foreman_installer_pkg }}"
-  yum:
+  package:
     name: "{{ foreman_installer_pkg }}"
     state: "{{ foreman_installer_pkg_state }}"
   notify:

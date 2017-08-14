@@ -4,9 +4,24 @@
     name: '*'
     update_cache: yes
     state: latest
+  when: ansible_os_family == "RedHat"
   notify:
     - 'set dont_save_answers to False'
     - execute foreman-installer
     - reload ansible_local
     - rewrite answers file
 
+- name: 'Update sources'
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+- name: 'Update packages'
+  apt:
+    upgrade: dist
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+  notify:
+    - 'set dont_save_answers to False'
+    - execute foreman-installer
+    - reload ansible_local
+    - rewrite answers file
