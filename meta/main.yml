@@ -1,0 +1,22 @@
+---
+galaxy_info:
+  author: Sean O'Keeffe
+  description: Interacts with foreman-installer to build Foreman, Katello or Smart Proxies.
+  issue_tracker_url: https://github.com/sean797/ansible-role-foreman_installer/issues
+  license: GPLv2
+  min_ansible_version: 2.3
+  platforms:
+  - name: EL
+    versions:
+      - 7
+  - name: Debian
+    versions:
+      - jessie
+  - name: Ubuntu
+    versions:
+      - xenial
+      - trusty
+  galaxy_tags:
+    - theforeman
+    - katello
+dependencies: []

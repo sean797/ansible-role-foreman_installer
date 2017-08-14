@@ -1,10 +1,13 @@
 ---
-- include: "packages.yml"
+- include: packages.yml
 
-- include: "facts.yml"
+- include: facts.yml
 
-- include: "installer.yml"
+- include: installer.yml
 
-- include: "ha-extras.yml"
+- include: upgrade.yml
+  when: foreman_installer_upgrade == True
+
+- include: ha-extras.yml
   tags:
     - ha_extras

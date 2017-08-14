@@ -1,0 +1,12 @@
+---
+- name: 'Update packages'
+  yum:
+    name: '*'
+    update_cache: yes
+    state: latest
+  notify:
+    - 'set dont_save_answers to False'
+    - execute foreman-installer
+    - reload ansible_local
+    - rewrite answers file
+

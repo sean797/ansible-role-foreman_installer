@@ -5,11 +5,8 @@ foreman_installer_verbose: False
 foreman_installer_scenario: foreman
 foreman_installer_options: []
 foreman_installer_custom_hiera: {}
-
-## Hash of Custom answers
-# installer_scenarios_answers:
-#   foreman:
-#     admin_password: changeme
+installer_scenarios_answers: {}
+foreman_installer_upgrade: False
 
 ## Custom Certs. Katello only
 katello_certs_dir: /root/certs

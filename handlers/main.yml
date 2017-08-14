@@ -30,6 +30,7 @@
       {{ (dont_save_answers == True) | ternary("--dont-save-answers", "") }}
       {{ (update_certs == True and update_certs_tar == False) | ternary("--certs-update-server --certs-update-server-ca", "") }}
       {{ (update_certs == True and update_certs_tar == True) | ternary("--certs-update-server", "") }}
+      {{ (foreman_installer_upgrade == True and (foreman_installer_scenario == "katello" or foreman_installer_scenario == "satellite")) | ternary("--upgrade", "") }}
       {{ foreman_installer_options | join(" ") }}
 
 - name: reload ansible_local
