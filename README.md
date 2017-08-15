@@ -78,6 +78,7 @@ vars:
            foreman_proxy_content:
              certs_tar: /root/foreman-proxy.example.com-certs.tar #This must already be on-disk
              pulp_oauth_secret: <outputted when generating the certifcates tar>
+             parent_fqdn: <Katello server FQDN>
            foreman_proxy:
              oauth_consumer_key: <outputted when generating the certifcates tar>
              oauth_consumer_secret: <outputted when generating the certifcates tar>
