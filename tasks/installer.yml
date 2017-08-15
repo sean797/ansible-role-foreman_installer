@@ -11,7 +11,7 @@
 
 - include: katello-server-certs.yml
   when:
-    - katello_cert is defined
+    - foreman_installer_katello_cert is defined
     - foreman_installer_scenario == 'katello' or foreman_installer_scenario == 'foreman' or foreman_installer_scenario == 'satellite'
 
 - include: katello-proxy-certs.yml

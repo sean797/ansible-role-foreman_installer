@@ -19,7 +19,7 @@
 
 - name: Write custom CA certificate file
   copy:
-    content: "{{ katello_ca }}"
+    content: "{{ foreman_installer_katello_ca }}"
     dest: "{{ katello_certs_dir }}/katello-ca-cert.pem"
     owner: root
     group: root
@@ -30,7 +30,7 @@
 
 - name: Write custom certificate file
   copy:
-    content: "{{ katello_cert }}"
+    content: "{{ foreman_installer_katello_cert }}"
     dest: "{{ katello_certs_dir }}/katello-server-cert.cer"
     owner: root
     group: root

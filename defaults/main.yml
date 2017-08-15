@@ -10,7 +10,7 @@ foreman_installer_upgrade: False
 
 ## Custom Certs. Katello only
 katello_certs_dir: /root/certs
-#katello_ca:
+#foreman_installer_katello_ca:
 #katello_cert:
 #katello_key:
 #katello_csr:
