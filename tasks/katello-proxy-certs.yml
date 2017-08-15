@@ -107,7 +107,7 @@
 
 - name: Copy certs tar to Proxy
   copy:
-    src: "/var/tmp/{{ ansible_fqdn + katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
+    src: "/var/tmp/{{ inventory_hostname + katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
     dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
   notify:
     - write answers file
