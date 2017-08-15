@@ -11,7 +11,7 @@ N/A
 ```yaml
 vars:
   foreman_installer:
-    foreman_installer_pkg:          # foreman installer package. You probably want either "foreman-installer" or "foreman-installer-katello".
+    foreman_installer_pkg:          # foreman installer package. You probably want either "foreman-installer" or "katello".
     foreman_installer_verbose:      # Run the installe with -v option
     foreman_installer_scenario:     # Scenario. Required
     installer_scenarios_answers:    # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
@@ -55,7 +55,7 @@ vars:
       - group_vars/vault_certs.yml
     roles:
        - role: foreman_installer
-         foreman_installer_pkg: foreman-installer-katello
+         foreman_installer_pkg: katello
          foreman_installer_scenario: katello
          installer_scenarios_answers:
            foreman:
@@ -126,7 +126,7 @@ Couple of things to note:
       - group_vars/vault_certs.yml
     roles:
        - role: foreman_installer
-         foreman_installer_pkg: foreman-installer-katello
+         foreman_installer_pkg: katello
          foreman_installer_scenario: katello
          installer_scenarios_answers:
            foreman_proxy_content:
