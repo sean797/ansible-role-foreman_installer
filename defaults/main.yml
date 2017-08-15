@@ -31,7 +31,7 @@ update_certs_tar: False
 #foreman_installer_module_prs: ""
 
 ## Internal Only
-generate_proxy_certs_from: "{{ (foreman_installer_scenarios_answers.capsule | default( foreman_installer_scenarios_answers.foreman_proxy_content )).parent_fqdn }}"
+foreman_installer_generate_proxy_certs_from: "{{ (foreman_installer_scenarios_answers.capsule | default( foreman_installer_scenarios_answers.foreman_proxy_content )).parent_fqdn }}"
 cert_generate_command: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-certs-generate', 'foreman-proxy-certs-generate') }}"
 cert_generate_fqdn_opt: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-fqdn', 'foreman-proxy-fqdn') }}"
 certs_puppet_module: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule', 'foreman_proxy_content') }}"

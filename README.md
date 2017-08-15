@@ -16,7 +16,7 @@ vars:
     foreman_installer_scenario:           # Scenario. Required
     foreman_installer_scenarios_answers:  # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
     foreman_installer_options: []         # Array of extra options to pass to whenever the installer is ran
-    generate_proxy_certs_from:            # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
+    foreman_installer_generate_proxy_certs_from:            # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
     katello_ca:                           # String containing the custom CA cert. Katello Only.
     katello_cert:                         # String containing the custom cert. Katello Only.
     katello_key:                          # String containing the custom key. Katello Only.
@@ -98,7 +98,7 @@ vars:
        - role: foreman_installer
          foreman_installer_pkg: foreman-proxy-content
          foreman_installer_scenario: foreman-proxy-content
-         generate_proxy_certs_from: katello.example.com
+         foreman_installer_generate_proxy_certs_from: katello.example.com
          katello_proxy_cert: "{{ vault_proxy1_cert }}"
          katello_proxy_key: "{{ vault_proxy1_key }}"
          katello_proxy_csr: "{{ vault_proxy1_csr }}"
@@ -177,7 +177,7 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
        - role: foreman_installer
          foreman_installer_pkg: foreman-proxy-content
          foreman_installer_scenario: foreman-proxy-content
-         generate_proxy_certs_from: katello1.example.com
+         foreman_installer_generate_proxy_certs_from: katello1.example.com
          katello_proxy_cert: "{{ vault_proxy1_cert }}" # Certificate must use dns-alt-names with all cluster Hostnames and VIP hostname.
          katello_proxy_key: "{{ vault_proxy1_key }}"
          katello_proxy_csr: "{{ vault_proxy1_csr }}"
