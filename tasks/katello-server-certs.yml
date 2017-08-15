@@ -25,7 +25,7 @@
     group: root
     mode: 0600
   notify:
-    - 'set update_certs to True'
+    - 'set foreman_installer_update_certs to True'
     - execute foreman-installer
 
 - name: Write custom certificate file
@@ -36,29 +36,29 @@
     group: root
     mode: 0600
   notify:
-    - 'set update_certs to True'
+    - 'set foreman_installer_update_certs to True'
     - execute foreman-installer
 
 - name: Write custom key certificate file
   copy:
-    content: "{{ katello_key }}"
+    content: "{{ foreman_installer_katello_key }}"
     dest: "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.key"
     owner: root
     group: root
     mode: 0600
   notify:
-    - 'set update_certs to True'
+    - 'set foreman_installer_update_certs to True'
     - execute foreman-installer
 
 - name: Write custom CSR certificate file
   copy:
-    content: "{{ katello_csr }}"
+    content: "{{ foreman_installer_katello_csr }}"
     dest: "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.csr"
     owner: root
     group: root
     mode: 0600
   notify:
-    - 'set update_certs to True'
+    - 'set foreman_installer_update_certs to True'
     - execute foreman-installer
 
 - name: Include katello certificate options in foreman_installer_scenarios_answers

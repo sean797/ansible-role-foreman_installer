@@ -12,19 +12,19 @@ foreman_installer_upgrade: False
 foreman_installer_katello_certs_dir: /root/certs
 #foreman_installer_katello_ca:
 #katello_cert:
-#katello_key:
-#katello_csr:
-update_certs: False
-update_certs_tar: False
+#foreman_installer_katello_key:
+#foreman_installer_katello_csr:
+foreman_installer_update_certs: False
+foreman_installer_update_certs_tar: False
 
 ## Advanced Options
 # foreman_installer_patches:
 #   - { src: files/proxy.patch, basedir: /usr/share/katello-installer-base/modules/pulp/ }
 #
 ## Generally you only need these if you are building a Foreman cluster.
-# foreman_encryption_key:
+# foreman_installer_encryption_key:
 # Group name contain all the Katello servers in a cluster
-# katello_cluster_group:
+# foreman_installer_katello_cluster_group:
 
 ## Development use
 # Comma-separated list of "organization/module/pr_number", e.g. "katello/foreman_proxy_content/37,katello/certs/34"

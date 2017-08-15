@@ -36,7 +36,7 @@
 
 - name: Write proxy custom certificate file
   copy:
-    content: "{{ katello_proxy_cert }}"
+    content: "{{ foreman_installer_katello_proxy_cert }}"
     dest: "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.cer"
     owner: root
     group: root
@@ -45,7 +45,7 @@
   notify:
     - execute foreman-installer
   delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
-  when: katello_proxy_cert is defined
+  when: foreman_installer_katello_proxy_cert is defined
 
 - name: Write proxy custom key certificate file
   copy:
@@ -62,7 +62,7 @@
 
 - name: Write proxy custom CSR certificate file
   copy:
-    content: "{{ katello_proxy_csr }}"
+    content: "{{ foreman_installer_katello_proxy_csr }}"
     dest: "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.csr"
     owner: root
     group: root
@@ -71,12 +71,12 @@
   notify:
     - execute foreman-installer
   delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
-  when: katello_proxy_csr is defined
+  when: foreman_installer_katello_proxy_csr is defined
 
-- name: 'set update_certs_tar to True'
+- name: 'set foreman_installer_update_certs_tar to True'
   set_fact:
-    update_certs_tar: True
-    update_certs: True
+    foreman_installer_update_certs_tar: True
+    foreman_installer_update_certs: True
   when:
     - certs_proxy_stat.results[0].stat.exists or certs_proxy_stat.results[1].stat.exists or certs_proxy_stat.results[2].stat.exists
     - (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False))
@@ -90,11 +90,11 @@
   command: >
     {{ cert_generate_command }} --{{ cert_generate_fqdn_opt }} {{ ansible_fqdn }}
     --certs-tar {{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-certs.tar
-    {{ ('--server-cert ' + foreman_installer_katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.cer') if katello_proxy_cert is defined else '' }}
-    {{ ('--server-cert-req ' + foreman_installer_katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.csr') if katello_proxy_csr is defined else '' }}
+    {{ ('--server-cert ' + foreman_installer_katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.cer') if foreman_installer_katello_proxy_cert is defined else '' }}
+    {{ ('--server-cert-req ' + foreman_installer_katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.csr') if foreman_installer_katello_proxy_csr is defined else '' }}
     {{ ('--server-key ' + foreman_installer_katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.key') if katello_proxy_key is defined else '' }}
     {{ ('--server-ca-cert ' + foreman_installer_katello_certs_dir + '/katello-ca-cert.pem') if foreman_installer_katello_ca is defined else '' }}
-    {{ (update_certs_tar) | ternary('--certs-update-server', '') }}
+    {{ (foreman_installer_update_certs_tar) | ternary('--certs-update-server', '') }}
   when: (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False)) or proxy_cert_tar.stat.exists == False
   delegate_to: "{{ item }}"
   with_items: "{{ foreman_installer_generate_proxy_certs_from }}"

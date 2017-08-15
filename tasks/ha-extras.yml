@@ -11,7 +11,7 @@
            default( (foreman_installer_scenarios_answers.foreman | default({})).user ) |
            default('foreman') }}"
     mode: 0640
-  when: foreman_encryption_key is defined
+  when: foreman_installer_encryption_key is defined
   notify:
     - restart httpd
 
@@ -24,15 +24,15 @@
     src: "{{ ((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca |
            default('/etc/pki/katello/certs/katello-default-ca.crt') }}"
     dest: /var/tmp/
-  when: katello_cluster_group is defined
+  when: foreman_installer_katello_cluster_group is defined
 
 - name: Distribute katello-default-ca cert
   copy:
     src: "/var/tmp/{{ ansible_fqdn + (((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca | default('/etc/pki/katello/certs/katello-default-ca.crt')) }}"
     dest: "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-katello-default-ca.crt"
   delegate_to: "{{ item }}"
-  with_items: "{{ groups[katello_cluster_group] }}"
-  when: katello_cluster_group is defined
+  with_items: "{{ groups[foreman_installer_katello_cluster_group] }}"
+  when: foreman_installer_katello_cluster_group is defined
   notify:
     - write answers file
     - execute foreman-installer
@@ -40,5 +40,5 @@
 - name: Include other katello-default-ca Certificates in foreman_installer_scenarios_answers
   set_fact:
     foreman_installer_scenarios_answers: "{{ foreman_installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((foreman_installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ foreman_installer_katello_certs_dir + '/' + hostvars[item]['ansible_nodename'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
-  with_items: "{{ groups[katello_cluster_group] }}"
-  when: katello_cluster_group is defined
+  with_items: "{{ groups[foreman_installer_katello_cluster_group] }}"
+  when: foreman_installer_katello_cluster_group is defined
