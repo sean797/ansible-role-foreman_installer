@@ -1,6 +1,8 @@
 ---
 - include: packages.yml
 
+- include: module_pr.yml
+
 - include: facts.yml
 
 - include: installer.yml
