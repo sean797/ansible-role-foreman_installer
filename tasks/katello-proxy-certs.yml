@@ -15,9 +15,9 @@
   stat:
     path: "{{ item }}"
   with_items:
-    - "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.cer"
-    - "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.key"
-    - "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.csr"
+    - "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.cer"
+    - "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.key"
+    - "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.csr"
   delegate_to: "{{ hostvars[generate_proxy_certs_from].ansible_nodename }}"
   register: certs_proxy_stat
 
@@ -37,7 +37,7 @@
 - name: Write proxy custom certificate file
   copy:
     content: "{{ katello_proxy_cert }}"
-    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.cer"
+    dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.cer"
     owner: root
     group: root
     mode: 0600
@@ -50,7 +50,7 @@
 - name: Write proxy custom key certificate file
   copy:
     content: "{{ katello_proxy_key }}"
-    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.key"
+    dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.key"
     owner: root
     group: root
     mode: 0600
@@ -63,7 +63,7 @@
 - name: Write proxy custom CSR certificate file
   copy:
     content: "{{ katello_proxy_csr }}"
-    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-proxy-cert.csr"
+    dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.csr"
     owner: root
     group: root
     mode: 0600
@@ -83,16 +83,16 @@
 
 - name: Register proxy cert tar stat
   stat:
-    path: "{{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
+    path: "{{ katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
   register: proxy_cert_tar
 
 - name: Generate Proxy Certs
   command: >
     {{ cert_generate_command }} --{{ cert_generate_fqdn_opt }} {{ ansible_fqdn }}
-    --certs-tar {{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar
-    {{ ('--server-cert ' + katello_certs_dir + '/' + ansible_hostname + '-proxy-cert.cer') if katello_proxy_cert is defined else '' }}
-    {{ ('--server-cert-req ' + katello_certs_dir + '/' + ansible_hostname + '-proxy-cert.csr') if katello_proxy_csr is defined else '' }}
-    {{ ('--server-key ' + katello_certs_dir + '/' + ansible_hostname + '-proxy-cert.key') if katello_proxy_key is defined else '' }}
+    --certs-tar {{ katello_certs_dir }}/{{ ansible_nodename }}-certs.tar
+    {{ ('--server-cert ' + katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.cer') if katello_proxy_cert is defined else '' }}
+    {{ ('--server-cert-req ' + katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.csr') if katello_proxy_csr is defined else '' }}
+    {{ ('--server-key ' + katello_certs_dir + '/' + ansible_nodename + '-proxy-cert.key') if katello_proxy_key is defined else '' }}
     {{ ('--server-ca-cert ' + katello_certs_dir + '/katello-ca-cert.pem') if katello_ca is defined else '' }}
     {{ (update_certs_tar) | ternary('--certs-update-server', '') }}
   when: (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False)) or proxy_cert_tar.stat.exists == False
@@ -101,14 +101,14 @@
 
 - name: Fetch certs-tar to localhost
   fetch:
-    src: "{{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
+    src: "{{ katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
     dest: /var/tmp/
   delegate_to: "{{ hostvars[generate_proxy_certs_from].ansible_nodename }}"
 
 - name: Copy certs tar to Proxy
   copy:
-    src: "/var/tmp/{{ ansible_fqdn + katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
-    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
+    src: "/var/tmp/{{ ansible_fqdn + katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
+    dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
   notify:
     - write answers file
     - execute foreman-installer
@@ -121,4 +121,4 @@
 
 - name: Include smart proxy certificate options in installer_scenarios_answers
   set_fact:
-    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { certs_puppet_module: {'certs_tar': katello_certs_dir + '/' + ansible_hostname + '-certs.tar', 'pulp_oauth_secret': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['katello']['oauth_secret'] }, 'foreman_proxy': { 'oauth_consumer_key': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['foreman']['oauth_consumer_key'], 'oauth_consumer_secret': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['foreman']['oauth_consumer_secret'] }  }, recursive=True ) }}"
+    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { certs_puppet_module: {'certs_tar': katello_certs_dir + '/' + ansible_nodename + '-certs.tar', 'pulp_oauth_secret': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['katello']['oauth_secret'] }, 'foreman_proxy': { 'oauth_consumer_key': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['foreman']['oauth_consumer_key'], 'oauth_consumer_secret': hostvars[generate_proxy_certs_from]['ansible_local']['foreman_installer'][hostvars[generate_proxy_certs_from].foreman_installer_scenario~'_answers']['foreman']['oauth_consumer_secret'] }  }, recursive=True ) }}"

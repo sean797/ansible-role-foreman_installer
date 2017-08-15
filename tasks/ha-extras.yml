@@ -29,7 +29,7 @@
 - name: Distribute katello-default-ca cert
   copy:
     src: "/var/tmp/{{ ansible_fqdn + (((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca | default('/etc/pki/katello/certs/katello-default-ca.crt')) }}"
-    dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-katello-default-ca.crt"
+    dest: "{{ katello_certs_dir }}/{{ ansible_nodename }}-katello-default-ca.crt"
   delegate_to: "{{ item }}"
   with_items: "{{ groups[katello_cluster_group] }}"
   when: katello_cluster_group is defined
@@ -39,6 +39,6 @@
 
 - name: Include other katello-default-ca Certificates in installer_scenarios_answers
   set_fact:
-    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ katello_certs_dir + '/' + hostvars[item]['ansible_hostname'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
+    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ katello_certs_dir + '/' + hostvars[item]['ansible_nodename'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
   with_items: "{{ groups[katello_cluster_group] }}"
   when: katello_cluster_group is defined
