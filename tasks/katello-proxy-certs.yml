@@ -84,7 +84,7 @@
 - name: Register proxy cert tar stat
   stat:
     path: "{{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
-  register: proxy_cert_star
+  register: proxy_cert_tar
 
 - name: Generate Proxy Certs
   command: >
