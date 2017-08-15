@@ -11,24 +11,24 @@ N/A
 ```yaml
 vars:
   foreman_installer:
-    foreman_installer_pkg:          # foreman installer package. You probably want either "foreman-installer" or "katello".
-    foreman_installer_verbose:      # Run the installe with -v option
-    foreman_installer_scenario:     # Scenario. Required
-    installer_scenarios_answers:    # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
-    foreman_installer_options: []   # Array of extra options to pass to whenever the installer is ran
-    generate_proxy_certs_from:      # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
-    katello_ca:                     # String containing the custom CA cert. Katello Only.
-    katello_cert:                   # String containing the custom cert. Katello Only.
-    katello_key:                    # String containing the custom key. Katello Only.
-    katello_csr:                    # String containing the custom csr. Katello Only.
-    katello_certs_dir:              # Directory to store the certificates
-    update_certs: False             # Set to True to force Certificate Update.
-    update_certs_tar: False         # Set to True to force new Proxy Certificates tar to be generated & applied.
+    foreman_installer_pkg:                # foreman installer package. You probably want either "foreman-installer" or "katello".
+    foreman_installer_verbose:            # Run the installe with -v option
+    foreman_installer_scenario:           # Scenario. Required
+    foreman_installer_scenarios_answers:  # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
+    foreman_installer_options: []         # Array of extra options to pass to whenever the installer is ran
+    generate_proxy_certs_from:            # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
+    katello_ca:                           # String containing the custom CA cert. Katello Only.
+    katello_cert:                         # String containing the custom cert. Katello Only.
+    katello_key:                          # String containing the custom key. Katello Only.
+    katello_csr:                          # String containing the custom csr. Katello Only.
+    katello_certs_dir:                    # Directory to store the certificates
+    update_certs: False                   # Set to True to force Certificate Update.
+    update_certs_tar: False               # Set to True to force new Proxy Certificates tar to be generated & applied.
 
     # Advanced Options
-    foreman_installer_patches:      # Array of Dicts allowing patches against the installer files. See defaults/main.yml for an example.
-    foreman_encryption_key:         # Encryption key that is put into /etc/foreman/encryption_key.rb. Must be the same across a Foreman cluster.
-    katello_cluster_group:          # Name of the inventory group will all Katello servers in. Requires http://projects.theforeman.org/issues/20021
+    foreman_installer_patches:            # Array of Dicts allowing patches against the installer files. See defaults/main.yml for an example.
+    foreman_encryption_key:               # Encryption key that is put into /etc/foreman/encryption_key.rb. Must be the same across a Foreman cluster.
+    katello_cluster_group:                # Name of the inventory group will all Katello servers in. Requires http://projects.theforeman.org/issues/20021
 ```
 
 ## Example Playbook
@@ -41,7 +41,7 @@ vars:
       roles:
         - role: foreman_installer
           foreman_installer_scenario: foreman
-          installer_scenarios_answers:
+          foreman_installer_scenarios_answers:
             foreman:
               admin_password: changeme
 ```
@@ -57,7 +57,7 @@ vars:
        - role: foreman_installer
          foreman_installer_pkg: katello
          foreman_installer_scenario: katello
-         installer_scenarios_answers:
+         foreman_installer_scenarios_answers:
            foreman:
              admin_password: changeme
          katello_ca: "{{ vault_katello_ca }}"
@@ -75,7 +75,7 @@ vars:
        - role: foreman_installer
          foreman_installer_pkg: foreman-proxy-content
          foreman_installer_scenario: foreman-proxy-content
-         installer_scenarios_answers:
+         foreman_installer_scenarios_answers:
            foreman_proxy_content:
              certs_tar: /root/foreman-proxy.example.com-certs.tar #This must already be on-disk
              pulp_oauth_secret: <outputted when generating the certifcates tar>
@@ -103,7 +103,7 @@ vars:
          katello_proxy_key: "{{ vault_proxy1_key }}"
          katello_proxy_csr: "{{ vault_proxy1_csr }}"
          katello_ca: "{{ vault_katello_ca }}"
-         installer_scenarios_answers:
+         foreman_installer_scenarios_answers:
            foreman_proxy_content:
              parent_fqdn: katello.example.com
            foreman_proxy:
@@ -128,7 +128,7 @@ Couple of things to note:
        - role: foreman_installer
          foreman_installer_pkg: katello
          foreman_installer_scenario: katello
-         installer_scenarios_answers:
+         foreman_installer_scenarios_answers:
            foreman_proxy_content:
              pulp_oauth_secret: uC2qfoQfPVhdFTBEbS89ykZWQz6BVpcu
            foreman:
@@ -182,7 +182,7 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
          katello_proxy_key: "{{ vault_proxy1_key }}"
          katello_proxy_csr: "{{ vault_proxy1_csr }}"
          katello_ca: "{{ vault_katello_ca }}"
-         installer_scenarios_answers:
+         foreman_installer_scenarios_answers:
            foreman_proxy_content:
              parent_fqdn: katello.example.com
            foreman_proxy:

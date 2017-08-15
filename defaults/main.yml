@@ -5,7 +5,7 @@ foreman_installer_verbose: False
 foreman_installer_scenario: foreman
 foreman_installer_options: []
 foreman_installer_custom_hiera: {}
-installer_scenarios_answers: {}
+foreman_installer_scenarios_answers: {}
 foreman_installer_upgrade: False
 
 ## Custom Certs. Katello only
@@ -31,7 +31,7 @@ update_certs_tar: False
 #foreman_installer_module_prs: ""
 
 ## Internal Only
-generate_proxy_certs_from: "{{ (installer_scenarios_answers.capsule | default( installer_scenarios_answers.foreman_proxy_content )).parent_fqdn }}"
+generate_proxy_certs_from: "{{ (foreman_installer_scenarios_answers.capsule | default( foreman_installer_scenarios_answers.foreman_proxy_content )).parent_fqdn }}"
 cert_generate_command: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-certs-generate', 'foreman-proxy-certs-generate') }}"
 cert_generate_fqdn_opt: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule-fqdn', 'foreman-proxy-fqdn') }}"
 certs_puppet_module: "{{ (foreman_installer_scenario == 'capsule') | ternary('capsule', 'foreman_proxy_content') }}"

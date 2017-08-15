@@ -8,7 +8,7 @@
     dest: /etc/foreman/encryption_key.rb
     owner: root
     group: "{{ ((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).user |
-           default( (installer_scenarios_answers.foreman | default({})).user ) |
+           default( (foreman_installer_scenarios_answers.foreman | default({})).user ) |
            default('foreman') }}"
     mode: 0640
   when: foreman_encryption_key is defined
@@ -37,8 +37,8 @@
     - write answers file
     - execute foreman-installer
 
-- name: Include other katello-default-ca Certificates in installer_scenarios_answers
+- name: Include other katello-default-ca Certificates in foreman_installer_scenarios_answers
   set_fact:
-    installer_scenarios_answers: "{{ installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ katello_certs_dir + '/' + hostvars[item]['ansible_nodename'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
+    foreman_installer_scenarios_answers: "{{ foreman_installer_scenarios_answers | combine( { 'certs': {'other_default_ca_certs': ((foreman_installer_scenarios_answers.certs | default({})).other_default_ca_certs | default([])) + [ katello_certs_dir + '/' + hostvars[item]['ansible_nodename'] + '-katello-default-ca.crt' ] } }, recursive=True ) }}"
   with_items: "{{ groups[katello_cluster_group] }}"
   when: katello_cluster_group is defined
