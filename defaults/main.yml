@@ -9,7 +9,7 @@ foreman_installer_scenarios_answers: {}
 foreman_installer_upgrade: False
 
 ## Custom Certs. Katello only
-katello_certs_dir: /root/certs
+foreman_installer_katello_certs_dir: /root/certs
 #foreman_installer_katello_ca:
 #katello_cert:
 #katello_key:

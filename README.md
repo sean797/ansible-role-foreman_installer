@@ -21,7 +21,7 @@ vars:
     foreman_installer_katello_cert:               # String containing the custom cert. Katello Only.
     katello_key:                                  # String containing the custom key. Katello Only.
     katello_csr:                                  # String containing the custom csr. Katello Only.
-    katello_certs_dir:                            # Directory to store the certificates
+    foreman_installer_katello_certs_dir:          # Directory to store the certificates
     update_certs: False                           # Set to True to force Certificate Update.
     update_certs_tar: False                       # Set to True to force new Proxy Certificates tar to be generated & applied.
 

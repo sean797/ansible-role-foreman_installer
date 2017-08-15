@@ -1,7 +1,7 @@
 ---
-- name: "Create {{ katello_certs_dir }}"
+- name: "Create {{ foreman_installer_katello_certs_dir }}"
   file:
-    path: "{{ katello_certs_dir }}"
+    path: "{{ foreman_installer_katello_certs_dir }}"
     state: directory
     owner: root
     group: root
@@ -11,16 +11,16 @@
   stat:
     path: "{{ item }}"
   with_items:
-    - "{{ katello_certs_dir }}/katello-ca-cert.pem"
-    - "{{ katello_certs_dir }}/katello-server-cert.cer"
-    - "{{ katello_certs_dir }}/katello-server-cert.key"
-    - "{{ katello_certs_dir }}/katello-server-cert.csr"
+    - "{{ foreman_installer_katello_certs_dir }}/katello-ca-cert.pem"
+    - "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.cer"
+    - "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.key"
+    - "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.csr"
   register: certs_stat
 
 - name: Write custom CA certificate file
   copy:
     content: "{{ foreman_installer_katello_ca }}"
-    dest: "{{ katello_certs_dir }}/katello-ca-cert.pem"
+    dest: "{{ foreman_installer_katello_certs_dir }}/katello-ca-cert.pem"
     owner: root
     group: root
     mode: 0600
@@ -31,7 +31,7 @@
 - name: Write custom certificate file
   copy:
     content: "{{ foreman_installer_katello_cert }}"
-    dest: "{{ katello_certs_dir }}/katello-server-cert.cer"
+    dest: "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.cer"
     owner: root
     group: root
     mode: 0600
@@ -42,7 +42,7 @@
 - name: Write custom key certificate file
   copy:
     content: "{{ katello_key }}"
-    dest: "{{ katello_certs_dir }}/katello-server-cert.key"
+    dest: "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.key"
     owner: root
     group: root
     mode: 0600
@@ -53,7 +53,7 @@
 - name: Write custom CSR certificate file
   copy:
     content: "{{ katello_csr }}"
-    dest: "{{ katello_certs_dir }}/katello-server-cert.csr"
+    dest: "{{ foreman_installer_katello_certs_dir }}/katello-server-cert.csr"
     owner: root
     group: root
     mode: 0600
@@ -63,4 +63,4 @@
 
 - name: Include katello certificate options in foreman_installer_scenarios_answers
   set_fact:
-    foreman_installer_scenarios_answers: "{{ foreman_installer_scenarios_answers | combine( { 'certs': {'server_cert': katello_certs_dir + '/katello-server-cert.cer','server_cert_req': katello_certs_dir + '/katello-server-cert.csr','server_key': katello_certs_dir + '/katello-server-cert.key','server_ca_cert': katello_certs_dir + '/katello-ca-cert.pem' } }, recursive=True ) }}"
+    foreman_installer_scenarios_answers: "{{ foreman_installer_scenarios_answers | combine( { 'certs': {'server_cert': foreman_installer_katello_certs_dir + '/katello-server-cert.cer','server_cert_req': foreman_installer_katello_certs_dir + '/katello-server-cert.csr','server_key': foreman_installer_katello_certs_dir + '/katello-server-cert.key','server_ca_cert': foreman_installer_katello_certs_dir + '/katello-ca-cert.pem' } }, recursive=True ) }}"
