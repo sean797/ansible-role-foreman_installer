@@ -16,6 +16,7 @@ vars:
     foreman_installer_scenario:     # Scenario. Required
     installer_scenarios_answers:    # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
     foreman_installer_options: []   # Array of extra options to pass to whenever the installer is ran
+    generate_proxy_certs_from:      # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
     katello_ca:                     # String containing the custom CA cert. Katello Only.
     katello_cert:                   # String containing the custom cert. Katello Only.
     katello_key:                    # String containing the custom key. Katello Only.
