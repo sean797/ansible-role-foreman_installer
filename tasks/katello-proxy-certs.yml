@@ -7,7 +7,7 @@
     group: root
     mode: 0755
   delegate_to: "{{ item }}"
-  with_items: 
+  with_items:
     - "{{ generate_proxy_certs_from }}"
     - "{{ ansible_hostname }}"
 
@@ -99,7 +99,7 @@
     src: "{{ katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"
     dest: /var/tmp/
   delegate_to: "{{ generate_proxy_certs_from }}"
-    
+
 - name: Copy certs tar to Proxy
   copy:
     src: "/var/tmp/{{ ansible_fqdn + katello_certs_dir }}/{{ ansible_hostname }}-certs.tar"

@@ -10,7 +10,7 @@
 - name: Apply installer fixes
   patch:
     src: "{{ item.src }}"
-    basedir: "{{ item.basedir }}" 
+    basedir: "{{ item.basedir }}"
     strip: "{{ item.strip | default(1) }}"
   with_items: "{{ foreman_installer_patches }}"
   when: foreman_installer_patches is defined

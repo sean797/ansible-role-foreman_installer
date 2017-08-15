@@ -2,7 +2,7 @@
 - name: run notified handlers
   meta: flush_handlers
 
-- name: Write /etc/foreman/encryption_key.rb 
+- name: Write /etc/foreman/encryption_key.rb
   template:
     src: templates/encryption_key.rb.j2
     dest: /etc/foreman/encryption_key.rb
@@ -30,7 +30,7 @@
   copy:
     src: "/var/tmp/{{ ansible_fqdn + (((ansible_local.foreman_installer[foreman_installer_scenario~'_answers'] | default({})).foreman | default({})).server_ssl_ca | default('/etc/pki/katello/certs/katello-default-ca.crt')) }}"
     dest: "{{ katello_certs_dir }}/{{ ansible_hostname }}-katello-default-ca.crt"
-  delegate_to: "{{ item }}" 
+  delegate_to: "{{ item }}"
   with_items: "{{ groups[katello_cluster_group] }}"
   when: katello_cluster_group is defined
   notify:
