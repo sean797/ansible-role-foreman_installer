@@ -78,10 +78,14 @@ vars:
            foreman_proxy_content:
              certs_tar: /root/foreman-proxy.example.com-certs.tar #This must already be on-disk
              pulp_oauth_secret: <outputted when generating the certifcates tar>
-             parent_fqdn: <Katello server FQDN>
+             parent_fqdn: katello.example.com
            foreman_proxy:
              oauth_consumer_key: <outputted when generating the certifcates tar>
              oauth_consumer_secret: <outputted when generating the certifcates tar>
+             foreman_base_url: https://katello.example.com
+             trusted_hosts:
+               - katello.example.com
+               - "{{ ansible_fqdn }}"
 ```
 
 ### Katello Proxy scenario without supplied certificates tar:
@@ -98,6 +102,13 @@ vars:
          katello_proxy_key: "{{ vault_proxy1_key }}"
          katello_proxy_csr: "{{ vault_proxy1_csr }}"
          katello_ca: "{{ vault_katello_ca }}"
+         installer_scenarios_answers:
+           foreman_proxy_content:
+             parent_fqdn: katello.example.com
+           foreman_proxy:
+             foreman_base_url: https://katello.example.com
+             trusted_hosts:
+               - katello.example.com
 ```
 
 ### Katello cluster with custom certificates: 
