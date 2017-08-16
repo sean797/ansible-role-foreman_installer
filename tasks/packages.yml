@@ -6,6 +6,7 @@
   notify:
     - reload ansible_local
     - 'set dont_save_answers to False'
+    - Workaround 18818
 
 - name: Apply installer fixes
   patch:

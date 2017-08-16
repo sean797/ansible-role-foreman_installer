@@ -1,4 +1,11 @@
 ---
+# http://projects.theforeman.org/issues/18818
+- name: Workaround 18818
+  command: >
+    foreman-installer --scenario "{{ foreman_installer_scenario }}" --migrations-only > /dev/null
+  changed_when: False
+  when: foreman_installer_scenario == "foreman-proxy-content"
+
 - name: restart httpd
   service:
     name: httpd
