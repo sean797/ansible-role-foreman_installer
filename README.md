@@ -64,7 +64,7 @@ vars:
            foreman:
              admin_password: changeme
          foreman_installer_katello_ca: "{{ vault_foreman_installer_katello_ca }}"
-         katello_cert: "{{ vault_katello_cert }}"
+         foreman_installer_katello_cert: "{{ vault_katello_cert }}"
          foreman_installer_katello_key: "{{ vault_foreman_installer_katello_key }}"
          foreman_installer_katello_csr: "{{ vault_foreman_installer_katello_csr }}"
 ```
@@ -103,7 +103,7 @@ vars:
          foreman_installer_scenario: foreman-proxy-content
          foreman_installer_generate_proxy_certs_from: katello.example.com
          foreman_installer_katello_proxy_cert: "{{ vault_proxy1_cert }}"
-         katello_proxy_key: "{{ vault_proxy1_key }}"
+         foreman_installer_katello_proxy_key: "{{ vault_proxy1_key }}"
          foreman_installer_katello_proxy_csr: "{{ vault_proxy1_csr }}"
          foreman_installer_katello_ca: "{{ vault_foreman_installer_katello_ca }}"
          foreman_installer_scenarios_answers:
@@ -160,7 +160,7 @@ Couple of things to note:
          foreman_installer_encryption_key: dfc6799e4d722a4e86c786cb0fc96cbbae0151f6
          foreman_installer_katello_cluster_group: katello-servers
          foreman_installer_katello_ca: "{{ vault_foreman_installer_katello_ca }}"
-         katello_cert: "{{ vault_katello_cert }}" # Certificate must use dns-alt-names with all cluster Hostnames and VIP hostname.
+         foreman_installer_katello_cert: "{{ vault_katello_cert }}" # Certificate must use dns-alt-names with all cluster Hostnames and VIP hostname.
          foreman_installer_katello_key: "{{ vault_foreman_installer_katello_key }}"
          foreman_installer_katello_csr: "{{ vault_foreman_installer_katello_csr }}"
          foreman_installer_patches:
@@ -182,7 +182,7 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
          foreman_installer_scenario: foreman-proxy-content
          foreman_installer_generate_proxy_certs_from: katello1.example.com
          foreman_installer_katello_proxy_cert: "{{ vault_proxy1_cert }}" # Certificate must use dns-alt-names with all cluster Hostnames and VIP hostname.
-         katello_proxy_key: "{{ vault_proxy1_key }}"
+         foreman_installer_katello_proxy_key: "{{ vault_proxy1_key }}"
          foreman_installer_katello_proxy_csr: "{{ vault_proxy1_csr }}"
          foreman_installer_katello_ca: "{{ vault_foreman_installer_katello_ca }}"
          foreman_installer_scenarios_answers:
