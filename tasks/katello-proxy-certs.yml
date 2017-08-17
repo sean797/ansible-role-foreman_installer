@@ -58,7 +58,7 @@
   notify:
     - execute foreman-installer
   delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
-  when: katello_proxy_key is defined
+  when: foreman_installer_katello_proxy_key is defined
 
 - name: Write proxy custom CSR certificate file
   copy:

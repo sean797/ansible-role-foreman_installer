@@ -17,6 +17,7 @@
 - include: katello-proxy-certs.yml
   when:
     - foreman_installer_scenario == 'capsule' or foreman_installer_scenario == 'foreman-proxy-content'
+    - foreman_installer_generate_proxy_certs_from is defined
 
 - name: Write /etc/foreman-installer/custom-hiera.yaml
   template:
