@@ -8,8 +8,8 @@
     mode: 0755
   delegate_to: "{{ item }}"
   with_items:
-    - "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
-    - "{{ ansible_nodename }}"
+    - "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
+    - "{{ inventory_hostname }}"
 
 - name: Register proxy cert files stat
   stat:
@@ -18,7 +18,7 @@
     - "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.cer"
     - "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.key"
     - "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-proxy-cert.csr"
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   register: certs_proxy_stat
 
 - name: Write proxy custom CA certificate file
@@ -31,7 +31,7 @@
   register: ca_cert
   notify:
     - execute foreman-installer
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   when: foreman_installer_katello_ca is defined
 
 - name: Write proxy custom certificate file
@@ -44,7 +44,7 @@
   register: custom_cert
   notify:
     - execute foreman-installer
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   when: foreman_installer_katello_proxy_cert is defined
 
 - name: Write proxy custom key certificate file
@@ -57,7 +57,7 @@
   register: key_cert
   notify:
     - execute foreman-installer
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   when: katello_proxy_key is defined
 
 - name: Write proxy custom CSR certificate file
@@ -70,7 +70,7 @@
   register: csr_cert
   notify:
     - execute foreman-installer
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   when: foreman_installer_katello_proxy_csr is defined
 
 - name: 'set foreman_installer_update_certs_tar to True'
@@ -96,14 +96,13 @@
     {{ ('--server-ca-cert ' + foreman_installer_katello_certs_dir + '/katello-ca-cert.pem') if foreman_installer_katello_ca is defined else '' }}
     {{ (foreman_installer_update_certs_tar) | ternary('--certs-update-server', '') }}
   when: (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False)) or proxy_cert_tar.stat.exists == False
-  delegate_to: "{{ item }}"
-  with_items: "{{ foreman_installer_generate_proxy_certs_from }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
 
 - name: Fetch certs-tar to localhost
   fetch:
     src: "{{ foreman_installer_katello_certs_dir }}/{{ ansible_nodename }}-certs.tar"
     dest: /var/tmp/
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
 
 - name: Copy certs tar to Proxy
   copy:
@@ -115,7 +114,7 @@
 
 - name: "Gather facts about {{ foreman_installer_generate_proxy_certs_from }}"
   setup:
-  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].ansible_nodename }}"
+  delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   delegate_facts: True
   when: hostvars[foreman_installer_generate_proxy_certs_from].ansible_local is not defined
 
