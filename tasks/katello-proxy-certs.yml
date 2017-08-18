@@ -116,7 +116,6 @@
   setup:
   delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
   delegate_facts: True
-  when: hostvars[foreman_installer_generate_proxy_certs_from].ansible_local is not defined
 
 - name: Include smart proxy certificate options in foreman_installer_scenarios_answers
   set_fact:
