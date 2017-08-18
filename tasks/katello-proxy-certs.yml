@@ -80,6 +80,9 @@
   when:
     - certs_proxy_stat.results[0].stat.exists or certs_proxy_stat.results[1].stat.exists or certs_proxy_stat.results[2].stat.exists
     - (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False))
+  tags:
+    - skip_ansible_lint
+
 
 - name: Register proxy cert tar stat
   stat:
@@ -97,6 +100,8 @@
     {{ (foreman_installer_update_certs_tar) | ternary('--certs-update-server', '') }}
   when: (ca_cert.changed | default(False)) or (custom_cert.changed | default(False)) or (key_cert.changed | default(False)) or (csr_cert.changed | default(False)) or proxy_cert_tar.stat.exists == False
   delegate_to: "{{ hostvars[foreman_installer_generate_proxy_certs_from].inventory_hostname }}"
+  tags:
+    - skip_ansible_lint
 
 - name: Fetch certs-tar to localhost
   fetch:

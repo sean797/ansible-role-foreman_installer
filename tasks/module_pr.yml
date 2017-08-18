@@ -29,6 +29,8 @@
       cd {{ item.split("/")[1] }} &&
       git fetch origin pull/{{ item.split("/")[2] }}/head:pr &&
       git merge pr
+  args:
+    creates: "{{ ((item.split('/')[0] == 'theforeman') | ternary('/usr/share/foreman-installer/modules/', '/usr/share/katello-installer-base/modules/')) + item.split('/')[1] + '/.git/index'  }}"
   with_items: "{{ foreman_installer_module_prs.split(',') }}"
   tags:
     - packages

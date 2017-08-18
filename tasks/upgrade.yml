@@ -10,6 +10,8 @@
     - execute foreman-installer
     - reload ansible_local
     - rewrite answers file
+  tags:
+    - skip_ansible_lint
 
 - name: 'Update sources'
   apt:

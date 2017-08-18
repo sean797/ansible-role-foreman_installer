@@ -1,0 +1,39 @@
+---
+language: python
+python: "2.7"
+
+env:
+  - ANSIBLE_VERSION=2.3.1
+  - ANSIBLE_VERSION=latest
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install ansible==$ANSIBLE_VERSION; fi
+  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+  - pip install ansible-lint urllib3 pyOpenSSL ndg-httpsclient pyasn1
+
+before_script:
+  # Setup Travis
+  - ansible-playbook -i localhost, test/setup_travis.yml --connection=local --sudo
+
+script:
+  # Syntax & lint check
+  - ansible-playbook -i localhost, test/test_foreman.yml --syntax-check
+  - find defaults/ handlers/ meta/ tasks/ -name "*.yml" -exec ansible-lint {} +
+  # Test Foreman Server
+  - ansible-playbook -i localhost, test/test_foreman.yml --connection=local --sudo --diff
+  # Idempotency check
+  - >
+    ansible-playbook -i localhost, test/test_foreman.yml --connection=local --sudo
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotency: PASS' && exit 0)
+    || (echo 'Idempotency: FAIL' && exit 1)
+  # Connection test
+  - |
+    status=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept:application/json,version=2" -H "Content-Type:application/json" -u admin:changeme -k https://$(hostname -f)/api)
+    [ $status -eq 200 ] || (echo "API FAILED, got $status" && exit 1)
+
+notifications:
+  email: false

@@ -2,7 +2,7 @@
 - name: 'Install locales'
   package:
     name: locales
-    state: latest
+    state: present
 
 - name: 'Ensure en_US.UTF-8 locale is available'
   locale_gen:

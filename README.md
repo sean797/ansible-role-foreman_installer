@@ -1,6 +1,7 @@
-# foreman_installer
+# foreman_installer [![Build Status](https://travis-ci.org/sean797/ansible-role-foreman_installer.svg?branch=master)](https://travis-ci.org/sean797/ansible-role-foreman_installer)
 
-Role to interact with foreman-installer
+Role to interact with foreman-installer 
+
 
 ## Requirements
 
