@@ -15,7 +15,7 @@ vars:
     foreman_installer_pkg:                        # foreman installer package. You probably want either "foreman-installer" or "katello".
     foreman_installer_verbose:                    # Run the installe with -v option
     foreman_installer_scenario:                   # Scenario. Required
-    foreman_installer_scenarios_answers:          # Dict of custom answers that for your scenario. This is merged with your scenarios default answers in the {{ scenario }}-answers.yml file.
+    foreman_installer_scenarios_answers:          # Dict of custom answers that for your scenario. See [FAQs](https://github.com/sean797/ansible-role-foreman_installer#faqs). 
     foreman_installer_options: []                 # Array of extra options to pass to whenever the installer is ran
     foreman_installer_generate_proxy_certs_from:  # String containing the ansible host to Generate Certificates for a Katello Smart Proxy
     foreman_installer_katello_ca:                 # String containing the custom CA cert. Katello & Katello Smart Proxy Only.
@@ -195,4 +195,22 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
                - katello1.example.com
                - katello2.example.com
                - katello.example.com
+```
+
+## FAQs
+
+### How do I know what options to put in `foreman_installer_scenarios_answers` var? ###
+
+You need to check in /etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml file. Storing answers like this makes the role idempotent, if you use `foreman_installer_options` instead we would have run the installer during every run to make sure its applied. Whereas this method allows us to manage the answer file and run the installer as a handler (only if something changes).
+
+### How do i remove options from `foreman_installer_scenarios_answers` var? ###
+
+You'll need to get the value to `null`.
+
+```yaml
+foreman_installer_scenarios_answers:
+  foreman_proxy_content:
+    foreman:
+      admin_password: changeme
+      admin_last_name: null
 ```
