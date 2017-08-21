@@ -195,6 +195,9 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
                - katello1.example.com
                - katello2.example.com
                - katello.example.com
+               - foreman-proxy1.example.com
+               - foreman-proxy2.example.com
+               - foreman-proxy.example.com
 ```
 
 ## FAQs
