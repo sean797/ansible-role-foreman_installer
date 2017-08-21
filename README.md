@@ -203,14 +203,26 @@ Each proxy is there own proxy in Foreman, but a client can use a VIP address to 
 
 You need to check in /etc/foreman-installer/scenarios.d/{{ foreman_installer_scenario }}-answers.yaml file. Storing answers like this makes the role idempotent, if you use `foreman_installer_options` instead we would have run the installer during every run to make sure its applied. Whereas this method allows us to manage the answer file and run the installer as a handler (only if something changes).
 
-### How do i remove options from `foreman_installer_scenarios_answers` var? ###
+### How do I remove options from `foreman_installer_scenarios_answers` var? ###
+ 
+You'll need to set the value to `null`.
+ 
+```yaml
+foreman_installer_scenarios_answers:
+  foreman:
+    admin_password: changeme
+    admin_last_name: null
+```
 
-You'll need to get the value to `null`.
+### How do I enable or disable a plug-in?
+
+To enable set the value to an empty hash. To disable set the value to false.
 
 ```yaml
 foreman_installer_scenarios_answers:
-  foreman_proxy_content:
-    foreman:
-      admin_password: changeme
-      admin_last_name: null
+  foreman:
+    admin_password: changeme
+    admin_last_name: null
+  "foreman::plugin::remote_execution": {}
+  "foreman::plugin::discovery": false
 ```
