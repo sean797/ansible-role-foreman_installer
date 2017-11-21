@@ -1,20 +1,17 @@
 ---
-- include: packages.yml
-
-#- include: locales.yml
-#  when: ansible_os_family == 'Debian'
+- include_tasks: packages.yml
 
 # Dev use only
-- include: module_pr.yml
+- include_tasks: module_pr.yml
   when: foreman_installer_module_prs is defined
 
-- include: facts.yml
+- include_tasks: facts.yml
 
-- include: installer.yml
+- include_tasks: installer.yml
 
-- include: upgrade.yml
+- include_tasks: upgrade.yml
   when: foreman_installer_upgrade == True
 
-- include: ha-extras.yml
+- include_tasks: ha-extras.yml
   tags:
     - ha_extras

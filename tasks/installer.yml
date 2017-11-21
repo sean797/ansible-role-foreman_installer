@@ -9,12 +9,12 @@
 - name: run notified handlers
   meta: flush_handlers
 
-- include: katello-server-certs.yml
+- include_tasks: katello-server-certs.yml
   when:
     - foreman_installer_katello_cert is defined
     - foreman_installer_scenario == 'katello' or foreman_installer_scenario == 'foreman' or foreman_installer_scenario == 'satellite'
 
-- include: katello-proxy-certs.yml
+- include_tasks: katello-proxy-certs.yml
   when:
     - foreman_installer_scenario == 'capsule' or foreman_installer_scenario == 'foreman-proxy-content'
     - foreman_installer_generate_proxy_certs_from is defined
