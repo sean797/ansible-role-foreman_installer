@@ -4,6 +4,7 @@
     name: "{{ foreman_installer_pkg }}"
     state: "{{ foreman_installer_pkg_state }}"
   notify:
+    - execute foreman-installer
     - reload ansible_local
     - 'set dont_save_answers to False'
     - Workaround 18818
