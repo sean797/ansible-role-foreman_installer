@@ -3,7 +3,8 @@ language: python
 python: "2.7"
 
 env:
-  - ANSIBLE_VERSION=2.3.1
+  - ANSIBLE_VERSION=2.4.4
+  - ANSIBLE_VERSION=2.5.4
   - ANSIBLE_VERSION=latest
 
 before_install:
@@ -16,17 +17,17 @@ install:
 
 before_script:
   # Setup Travis
-  - ansible-playbook -i localhost, test/setup_travis.yml --connection=local --sudo
+  - ansible-playbook -i localhost, test/setup_travis.yml --connection=local --become
 
 script:
   # Syntax & lint check
   - ansible-playbook -i localhost, test/test_foreman.yml --syntax-check
   - find defaults/ handlers/ meta/ tasks/ -name "*.yml" -exec ansible-lint {} +
   # Test Foreman Server
-  - ansible-playbook -i localhost, test/test_foreman.yml --connection=local --sudo --diff
+  - ansible-playbook -i localhost, test/test_foreman.yml --connection=local --become --diff
   # Idempotency check
   - >
-    ansible-playbook -i localhost, test/test_foreman.yml --connection=local --sudo
+    ansible-playbook -i localhost, test/test_foreman.yml --connection=local --become
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotency: PASS' && exit 0)
     || (echo 'Idempotency: FAIL' && exit 1)

@@ -4,7 +4,7 @@ galaxy_info:
   description: Interacts with foreman-installer/satellite-installer to build Foreman, Katello, Satllite 6, Capsules or Smart Proxies.
   issue_tracker_url: https://github.com/sean797/ansible-role-foreman_installer/issues
   license: GPLv2
-  min_ansible_version: 2.3
+  min_ansible_version: 2.4
   platforms:
   - name: EL
     versions:
