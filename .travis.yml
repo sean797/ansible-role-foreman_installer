@@ -1,40 +1,51 @@
 ---
-language: python
-python: "2.7"
+sudo: required
 
 env:
-  - ANSIBLE_VERSION=2.4.4
-  - ANSIBLE_VERSION=2.5.4
-  - ANSIBLE_VERSION=latest
+  - distribution: centos
+    version: 7
+    ansible_version: 2.4.6
+    foreman_version: 1.18
+    scenario: foreman
+  - distribution: centos
+    version: 7
+    ansible_version: 2.5.6
+    foreman_version: 1.18
+    scenario: foreman
+  - distribution: centos
+    version: 7
+    ansible_version: latest
+    foreman_version: 1.18
+    scenario: foreman
+ # TODO
+ # - distribution: centos
+ #   version: 7
+ #   ansible_version: latest
+ #   foreman_version: 1.18
+ #   katello_version: 3.6
+ #   scenario: katello
+
+services:
+  - docker
 
 before_install:
-  - sudo apt-get update -qq
-
-install:
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install ansible==$ANSIBLE_VERSION; fi
-  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
-  - pip install ansible-lint urllib3 pyOpenSSL ndg-httpsclient pyasn1
-
-before_script:
-  # Setup Travis
-  - ansible-playbook -i localhost, test/setup_travis.yml --connection=local --become
+  - 'sudo docker pull ${distribution}:${version}'
+  - 'sudo docker build --no-cache --rm --build-arg ansible_version=${ansible_version} --build-arg foreman_version=${foreman_version} --build-arg katello_version=${katello_version} --file=travis/Dockerfile.${distribution}-${version} --tag=${distribution}-${version}:ansible travis'
 
 script:
-  # Syntax & lint check
-  - ansible-playbook -i localhost, test/test_foreman.yml --syntax-check
-  - find defaults/ handlers/ meta/ tasks/ -name "*.yml" -exec ansible-lint {} +
-  # Test Foreman Server
-  - ansible-playbook -i localhost, test/test_foreman.yml --connection=local --become --diff
-  # Idempotency check
+  - container_id=$(mktemp)
+  - 'sudo docker run --detach --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro --volume="${PWD}":/sean797.foreman_installer:ro --hostname ${scenario}.example.com -p 443:443/tcp ${distribution}-${version}:ansible > "${container_id}"'
+  - 'sudo docker exec "$(cat ${container_id})" ansible-lint /sean797.foreman_installer'
+  - 'sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v --extra-vars "foreman_installer_scenario=${scenario}" /sean797.foreman_installer/travis/${scenario}.yml'
   - >
-    ansible-playbook -i localhost, test/test_foreman.yml --connection=local --become
+    sudo docker exec "$(cat ${container_id})" env ANSIBLE_FORCE_COLOR=1 ansible-playbook -v --extra-vars "foreman_installer_scenario=${scenario}" /sean797.foreman_installer/travis/${scenario}.yml
     | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotency: PASS' && exit 0)
-    || (echo 'Idempotency: FAIL' && exit 1)
-  # Connection test
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
   - |
     status=$(curl -s -o /dev/null -w "%{http_code}" -H "Accept:application/json,version=2" -H "Content-Type:application/json" -u admin:changeme -k https://$(hostname -f)/api)
     [ $status -eq 200 ] || (echo "API FAILED, got $status" && exit 1)
+  - 'sudo docker rm -f "$(cat ${container_id})"'
 
 notifications:
   email: false

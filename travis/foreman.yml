@@ -1,10 +1,9 @@
 ---
-- hosts: all
-  remote_user: root
+- hosts: localhost,
   vars:
     foreman_installer_scenario: foreman
     foreman_installer_scenarios_answers:
       foreman:
         admin_password: changeme
   roles:
-    - ../../ansible-role-foreman_installer
+    - ../../sean797.foreman_installer

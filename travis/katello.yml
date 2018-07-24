@@ -1,0 +1,10 @@
+---
+- hosts: localhost,
+  vars:
+    foreman_installer_scenario: katello
+    foreman_installer_pkg: katello
+    foreman_installer_scenarios_answers:
+      foreman:
+        admin_password: changeme
+  roles:
+    - ../../sean797.foreman_installer

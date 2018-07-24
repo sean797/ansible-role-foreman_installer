@@ -32,3 +32,4 @@
   with_items: "{{ foreman_installer_module_prs.split(',') }}"
   tags:
     - packages
+    - skip_ansible_lint
